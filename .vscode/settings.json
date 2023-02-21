@@ -1,0 +1,7 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/392f2f87-c13c-4ba1-972a-dd77c4f6b1de/AppServices/subscriptions/392f2f87-c13c-4ba1-972a-dd77c4f6b1de/resourceGroups/MyResourceGroup/providers/Microsoft.Web/sites/nestwebapp1"
+}
