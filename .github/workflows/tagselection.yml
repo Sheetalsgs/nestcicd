@@ -1,0 +1,26 @@
+name: Populate Tags Dropdown
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Select a tag to deploy'
+        required: true
+        options: ${{ steps.populate-tags.outputs.tags }}
+
+jobs:
+  populate-tags:
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.set-tags.outputs.tags }}
+    steps:
+      - name: Fetch Tags
+        id: set-tags
+        run: |
+          tags=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/tags | jq -r '.[].name')
+          echo "::set-output name=tags::$tags"
+  deploy:
+    runs-on: self-hosted
+    needs: populate-tags
+    steps:
+      # Your deployment steps here
