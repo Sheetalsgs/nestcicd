@@ -3,7 +3,7 @@ name: workingfile with job seperation
 on:
   workflow_dispatch:
     inputs:
-      branch:
+      tag:
         description: 'Select a tag to deploy'
         required: true
         default: 'dev'
