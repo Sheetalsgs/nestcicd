@@ -1,0 +1,35 @@
+name: Deploy on Prod Tags
+
+on:
+  push:
+    tags:
+      - 'prod*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: List files before build
+        run: ls -al
+
+      - name: Build app
+        run: npm run build
+
+      - name: List files after build
+        run: ls -al
+
+      - name: List files inside build directory
+        run: ls ./dist
+
+      - name: Deploy
+        run: |
+          # Add your deployment logic for tags here
+          # This step will only run when a tag starting with "prod" is pushed
+          echo "Deploying tag: ${{ github.ref }}"
