@@ -3,8 +3,8 @@ name: Deploy to dev
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Select a branch to deploy'
+      tag:
+        description: 'Select a tag to deploy'
         required: true
         default: 'dev'
 
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ github.event.inputs.tag }}
       - name: Install dependencies
         run: npm install
       - name: list before build
