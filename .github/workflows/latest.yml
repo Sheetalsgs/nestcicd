@@ -1,0 +1,24 @@
+name: latest
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Select a tag to deploy'
+        required: true
+        options: ${{ steps.fetch-tags.outputs.tags }}
+
+jobs:
+  fetch-tags:
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.set-tags.outputs.tags }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Fetch Tags
+        id: set-tags
+        run: |
+          tags=$(git for-each-ref --sort=-v:refname --format '%(refname:short)' refs/tags)
+          echo "::set-output name=tags::$tags"
