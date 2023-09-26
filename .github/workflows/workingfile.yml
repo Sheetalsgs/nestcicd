@@ -74,10 +74,11 @@ jobs:
           key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.EC2_INSTANCE_PASSPHRASE }}
           script: |
-            docker login -u AWS -p "$(aws ecr get-login-password --region ap-southeast-1)" 589943763826.dkr.ecr.ap-southeast-1.amazonaws.com
-            docker pull 589943763826.dkr.ecr.ap-southeast-1.amazonaws.com/prodagentservice:agentlatest
             cd /home/ec2-user/workspace/agent-service
             sudo docker stop agentlatest || true
             sudo docker rm -f agentlatest || true
+            sudo docker rmi -f 589943763826.dkr.ecr.ap-southeast-1.amazonaws.com/prodagentservice:agentlatest
+            docker login -u AWS -p "$(aws ecr get-login-password --region ap-southeast-1)" 589943763826.dkr.ecr.ap-southeast-1.amazonaws.com
+            docker pull 589943763826.dkr.ecr.ap-southeast-1.amazonaws.com/prodagentservice:agentlatest
             sudo docker run -d -p 3002:3002 --name agentlatest --env-file .env 589943763826.dkr.ecr.ap-southeast-1.amazonaws.com/prodagentservice:agentlatest
             sudo docker images -f "dangling=true" -q | xargs -r sudo docker rmi
