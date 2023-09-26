@@ -1,4 +1,4 @@
-name: workingfile
+name: workingfile with job seperation
 
 on:
   workflow_dispatch:
