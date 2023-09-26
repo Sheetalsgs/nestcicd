@@ -6,7 +6,6 @@ on:
       tag:
         description: 'Select a tag to deploy'
         required: true
-        default: 'dev'
 
 jobs:
   checkout_and_build:
