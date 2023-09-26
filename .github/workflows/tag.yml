@@ -1,21 +1,39 @@
-- uses: actions/github-script@v6
-  id: get-release
-  with:
-    retries: 3
-    script: |
-      if (${{ startsWith(github.event.inputs.ref, 'v') }}) {
-        return github.rest.repos.getReleaseByTag({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
-          tag: "${{ github.event.inputs.ref }}"
-        })
-      } else {
-        return github.rest.repos.getReleaseByTag({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
-          tag: "${{ github.ref_name }}"
-        })
-      }
-- name: Output Github Release
-  if: steps.get-release.outputs.result != ''
-  run: echo '${{ steps.get-release.outputs.result }}' | jq -r '.data.tag_name'
+name: Deploy to dev
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Enter the tag to deploy (e.g., v1.0.0)'
+        required: true
+
+jobs:
+  get-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Get Release
+        id: get-release
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            if (context.payload.inputs.ref.startsWith('v')) {
+              const response = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: context.payload.inputs.ref
+              });
+              return response.data.tag_name;
+            } else {
+              const response = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: context.ref
+              });
+              return response.data.tag_name;
+            }
+      - name: Output Github Release
+        if: steps.get-release.outputs.result
+        run: echo "The selected release tag is ${{ steps.get-release.outputs.result }}"
