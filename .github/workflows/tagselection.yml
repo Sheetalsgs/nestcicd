@@ -29,7 +29,7 @@ jobs:
       - name: Whitelist runner IP address
         run: |
           aws ec2 authorize-security-group-ingress \
-            --group-id sg-0a671e9b7d2a16025 \
+            --group-id ${{ secrets.AWS_INSTANCE_SG_ID }} \
             --protocol tcp \
             --port 2202 \
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
@@ -38,10 +38,4 @@ jobs:
         run: |
           # ...run tests against your RDS instance...
 
-      - name: Revoke runner IP address
-        run: |
-          aws ec2 revoke-security-group-ingress \
-            --group-id ${{ secrets.AWS_INSTANCE_SG_ID }} \
-            --protocol tcp \
-            --port 22 \
-            --cidr ${{ steps.ip.outputs.ipv4 }}/32
+      
