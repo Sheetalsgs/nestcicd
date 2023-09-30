@@ -20,7 +20,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ap-south-1
 
       - name: Get runner IP address
         id: ip
@@ -31,7 +31,7 @@ jobs:
           aws ec2 authorize-security-group-ingress \
             --group-id sg-0a671e9b7d2a16025 \
             --protocol tcp \
-            --port 22 \
+            --port 2202 \
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       - name: Connect to your RDS instance and run tests
