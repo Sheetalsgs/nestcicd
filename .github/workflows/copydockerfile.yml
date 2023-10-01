@@ -47,7 +47,7 @@ jobs:
           passphrase: ${{ secrets.SERVER_PASSPHRASE }}
           script: |
             cd /home/ec2-user/docker-image
-            sudo gunzip -c qaorg.tar.gz
+            sudo gunzip qaorg.tar.gz
             sudo docker stop qaorg || true
             sudo docker rm -f qaorg || true
             sudo docker load -i qaorg.tar
