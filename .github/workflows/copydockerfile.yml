@@ -1,0 +1,56 @@
+name: Linux Arm Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        architecture: [arm64]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      
+      - name: Build Docker image
+        run: docker buildx qaorg .
+        
+      - name: Save Docker image
+        run: |
+            docker save qaorg:latest | gzip > qaorg.tar.gz
+        
+      - name: Transfer and load Docker image
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_INSTANCE_IP }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "qaorg.tar.gz"
+          target: "/home/ec2-user/workspace/organization-service/qaorg.tar.gz"
+        
+     
+      - name: SSH command
+        uses: appleboy/ssh-action@master
+        with:
+            host: ${{ secrets.EC2_INSTANCE_IP }}
+            username: ${{ secrets.SSH_USERNAME }}
+            key: ${{ secrets.SSH_PRIVATE_KEY }}
+            passphrase: ${{ secrets.SERVER_PASSPHRASE }}
+            script: |
+              cd /home/ec2-user/workspace/organization-service/qaorg.tar.gz
+              sudo gunzip qaorg.tar.gz
+              sudo docker stop qaorg || true
+              sudo docker rm -f qaorg || true
+              sudo docker load -i qaorg
+              sudo docker run --name qaorg -dp 3006:3006 --env-file .env qaorg:latest
+
