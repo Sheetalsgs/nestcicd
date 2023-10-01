@@ -1,4 +1,4 @@
-name: Linux Arm Workflow
+name: Linux Arm Workflow to deploy docker
 
 on:
   push:
