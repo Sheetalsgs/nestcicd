@@ -72,8 +72,12 @@ jobs:
           script: |
             cd /home/ec2-user/workspace/organization-service/
             sudo gunzip qaorg.tar.gz
+            sudo docker stop qaorg || true
+            sudo docker rm -f qaorg || true
             sudo docker load -i qaorg.tar
             sudo docker run --name qaorg -dp 3000:3000 qaorg:latest
+            rm -rf qaorg.tar.gz
+            rm -rf qaorg.tar
             
       - name: revoke runner ip address
         run: |
