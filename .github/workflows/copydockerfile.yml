@@ -47,8 +47,6 @@ jobs:
           passphrase: ${{ secrets.SERVER_PASSPHRASE }}
           script: |
             cd /home/ec2-user/workspace/organization-service/
-            rm -rf qaorg.tar.gz
             sudo gunzip qaorg.tar.gz
-            
             sudo docker load -i qaorg.tar
             sudo docker run --name qaorg -dp 3000:3000 --env-file .env qaorg:latest
