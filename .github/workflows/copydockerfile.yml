@@ -49,4 +49,4 @@ jobs:
             cd /home/ec2-user/workspace/organization-service/
             sudo gunzip qaorg.tar.gz
             sudo docker load -i qaorg.tar
-            sudo docker run --name qaorg -dp 3000:3000 --env-file .env qaorg:latest
+            sudo docker run --name qaorg -dp 3000:3000 qaorg:latest
