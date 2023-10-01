@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "qaorg.tar.gz"
-          target: "/home/ec2-user/workspace/organization-service/qaorg.tar.gz"
+          target: "/home/ec2-user/workspace/organization-service/"
 
       - name: SSH command
         uses: appleboy/ssh-action@master
