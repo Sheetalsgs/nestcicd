@@ -8,6 +8,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      AWS_INSTANCE_SG_ID: ${{ secrets.AWS_INSTANCE_SG_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ap-south-1  # Replace with your AWS region
     strategy:
       matrix:
         architecture: [arm64]
@@ -28,6 +33,25 @@ jobs:
       - name: Save Docker image
         run: |
           docker save qaorg:latest | gzip > qaorg.tar.gz
+          
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Get runner IP address
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Whitelist runner IP address
+        run: |
+          aws ec2 authorize-security-group-ingress \
+            --group-id ${{ secrets.AWS_INSTANCE_SG_ID }} \
+            --protocol tcp \
+            --port 2202 \
+            --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       - name: Transfer and load Docker image
         uses: appleboy/scp-action@v0.1.4
@@ -50,3 +74,12 @@ jobs:
             sudo gunzip qaorg.tar.gz
             sudo docker load -i qaorg.tar
             sudo docker run --name qaorg -dp 3000:3000 qaorg:latest
+            
+      - name: revoke runner ip address
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id $AWS_INSTANCE_SG_ID \
+            --protocol tcp \
+            --port 22 \
+            --cidr ${{ steps.ip.outputs.ipv4 }}/32
+      
