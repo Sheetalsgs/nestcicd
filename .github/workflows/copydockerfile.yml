@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "qaorg.tar.gz"
-          target: "/home/ec2-user/workspace/organization-service/"
+          target: "/home/ec2-user/docker-image/"
 
       - name: SSH command
         uses: appleboy/ssh-action@master
@@ -46,7 +46,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SERVER_PASSPHRASE }}
           script: |
-            cd /home/ec2-user/workspace/organization-service
+            cd /home/ec2-user/docker-image
             sudo gunzip -c qaorg.tar.gz
             sudo docker stop qaorg || true
             sudo docker rm -f qaorg || true
