@@ -32,6 +32,7 @@ jobs:
 
       - name: Save Docker image
         run: |
+          uname -m
           docker save qaorg:latest | gzip > qaorg.tar.gz
           
       - name: Configure AWS credentials
