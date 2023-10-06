@@ -31,7 +31,7 @@ jobs:
         run: docker build -t qaorg .
 
       - name : copy files to ec2
-        run: rsync -avz --exclude='node_modules' --exclude='dist/logs' ./Dockerfile ${{ secrets.PROD_SSH_USERNAME }}@${{ secrets.PROD_EC2_INSTANCE_IP }}:/home/ec2-user/workspace/organization-service/
+        run: rsync -avz --exclude='node_modules' --exclude='dist/logs' ./Dockerfile ${{ secrets.SSH_USERNAME }}@$${{ secrets.EC2_INSTANCE_IP }}:/home/ec2-user/workspace/organization-service/
       
 
       - name: Save Docker image
