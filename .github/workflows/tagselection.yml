@@ -3,7 +3,7 @@ name: prod Agent Revocation Tag Workflow on main
 on:
   push:
     branches:
-      - main
+      - qqq
 
 jobs:
   deploy:
